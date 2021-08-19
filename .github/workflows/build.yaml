@@ -68,6 +68,10 @@ jobs:
     needs: [build-docker]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: code
+          path: .
       - name: test
         run: |
           chmod +x ./ci/component-test.sh
