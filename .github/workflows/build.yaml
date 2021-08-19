@@ -40,19 +40,22 @@ jobs:
 
   build-docker:
     needs: [clone,build,test]
-    env:
-      docker_username: ${{ secrets.DOCKER_USERNAME }}
-      docker_password: ${{ secrets.DOCKER_PASSWORD }
+    runs-on: dind-latest
     steps:
       - uses: actions/download-artifact@v2
         with:
           name: code
           path: .
       - name: build
+        env:
+          docker_username: ${{ secrets.DOCKER_USERNAME }}
         run: |
           chmod +x ./ci/build-docker.sh
           GIT_COMMIT="GA-$GITHUB_SHA" ./ci/build-docker.sh
       - name: push
+        env:
+          docker_username: ${{ secrets.DOCKER_USERNAME }}
+          docker_password: ${{ secrets.DOCKER_PASSWORD }
         run: |
           chmod +x ./ci/push-docker.sh
           GIT_COMMIT="GA-$GITHUB_SHA" ./ci/push-docker.sh
