@@ -20,9 +20,9 @@ jobs:
           name: code
           path: .
       - name: build
-        run:
-          - chmod +x ./ci/build-app.sh
-          - ./ci/build-app.sh
+        run: |
+          chmod +x ./ci/build-app.sh
+          ./ci/build-app.sh
 
   test:
     needs: [clone]
@@ -34,6 +34,6 @@ jobs:
           name: code
           path: .
       - name: test
-        run:
-          - chmod +x ./ci/unit-test-app.sh
-          - ./ci/unit-test-app.sh
+        run: |
+          chmod +x ./ci/unit-test-app.sh
+          ./ci/unit-test-app.sh
