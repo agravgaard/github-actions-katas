@@ -37,3 +37,22 @@ jobs:
         run: |
           chmod +x ./ci/unit-test-app.sh
           ./ci/unit-test-app.sh
+
+  build-docker:
+    needs: [clone,build,test]
+    env:
+      docker_username: ${{ secrets.DOCKER_USERNAME }}
+      docker_password: ${{ secrets.DOCKER_PASSWORD }
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: code
+          path: .
+      - name: build
+        run: |
+          chmod +x ./ci/build-docker.sh
+          GIT_COMMIT="GA-$GITHUB_SHA" ./ci/build-docker.sh
+      - name: push
+        run: |
+          chmod +x ./ci/push-docker.sh
+          GIT_COMMIT="GA-$GITHUB_SHA" ./ci/push-docker.sh
