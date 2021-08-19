@@ -1,3 +1,7 @@
+env:
+  docker_username: ${{ secrets.DOCKER_USERNAME }}
+  docker_password: ${{ secrets.DOCKER_PASSWORD }}
+
 name: Gradle-CI
 on: push
 jobs:
@@ -52,15 +56,19 @@ jobs:
           name: code
           path: .
       - name: build
-        env:
-          docker_username: ${{ secrets.DOCKER_USERNAME }}
         run: |
           chmod +x ./ci/build-docker.sh
           GIT_COMMIT="GA-$GITHUB_SHA" ./ci/build-docker.sh
       - name: push
-        env:
-          docker_username: ${{ secrets.DOCKER_USERNAME }}
-          docker_password: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           chmod +x ./ci/push-docker.sh
           GIT_COMMIT="GA-$GITHUB_SHA" ./ci/push-docker.sh
+
+  component-test-docker:
+    needs: [build-docker]
+    runs-on: ubuntu-latest
+    steps:
+      - name: test
+        run: |
+          chmod +x ./ci/component-test.sh
+          GIT_COMMIT="GA-$GITHUB_SHA" ./ci/component-test.sh
