@@ -1,15 +1,29 @@
-name: gradle-build
+name: Gradle-CI
 on: push
 jobs:
-  build-and-test:
+  clone:
     runs-on: ubuntu-latest
     container: gradle:6-jdk11
     steps:
       - uses: actions/checkout@v2
+  build:
+    needs: [clone]
+    runs-on: ubuntu-latest
+    container: gradle:6-jdk11
+    steps:
       - name: build
         run: ./ci/build-app.sh
+  test:
+    needs: [clone]
+    runs-on: ubuntu-latest
+    container: gradle:6-jdk11
+    steps:
       - name: test
         run: ./ci/unit-test-app.sh
+  upload:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
       - name: upload-repo
         uses: actions/upload-artifact@v2
         with:
